@@ -1,9 +1,9 @@
 // Sky Courier: Aurora Run — the hand-in program (Node 22, standard library only).
-// The game is this directory's game/ folder: plain static files a desktop browser
-// loads offline (game/index.html and its ES modules, no library, no network request).
-// This program copies game/ and screenshots/ from beside this file to /output and
-// writes /output/dossier.json, the summary the judge reads, with the vendored
-// make.fun library.
+// The game lives in this directory's game/ folder: plain static files a desktop
+// browser loads offline (game/index.html and its ES modules, no library, no
+// network request). This program copies game/ and screenshots/ from beside this
+// file into /output and writes /output/dossier.json — the summary the judge
+// reads — using the vendored make.fun library.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
@@ -18,6 +18,8 @@ const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
 mkdirSync(out, { recursive: true });
+// Fail loudly, with the missing path named, instead of cpSync's bare ENOENT.
+if (!existsSync(join(here, 'game'))) throw new Error(`game/ not found beside main.ts: ${join(here, 'game')}`);
 cpSync(join(here, 'game'), join(out, 'game'), { recursive: true });
 mkdirSync(join(out, 'screenshots'), { recursive: true });
 if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), join(out, 'screenshots'), { recursive: true });
